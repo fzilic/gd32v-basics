@@ -146,7 +146,7 @@ namespace LCDBuiltin
     void LCDBuiltin::write(uint8_t data)
     {
         _cs.clear();
-        _spi.transmit(data);
+        _spi.transfer(data);
         _cs.set();
     }
 

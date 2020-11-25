@@ -17,9 +17,9 @@ void ST7920::send(uint8_t prefix, uint8_t data)
 {
     _spi.begin();
     _cs.set();
-    _spi.transmit(prefix);
-    _spi.transmit(data & 0xF0);
-    _spi.transmit(data << 4);
+    _spi.transfer(prefix);
+    _spi.transfer(data & 0xF0);
+    _spi.transfer(data << 4);
     _cs.clear();
     _spi.end();
 }

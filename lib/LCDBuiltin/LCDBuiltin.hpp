@@ -7,7 +7,6 @@
 
 namespace LCDBuiltin
 {
-
     enum LCDBuiltinOrientation
     {
         VERTICAL,
@@ -50,7 +49,7 @@ namespace LCDBuiltin
     class LCDBuiltin
     {
     private:
-        SPI _spi;
+        SPI::SPI _spi;
         GPIO _rst;
         GPIO _cs;
         GPIO _dc;
@@ -69,9 +68,9 @@ namespace LCDBuiltin
         LCDBuiltin(LCDBuiltinColor backColor = WHITE,
                    LCDBuiltinOrientation orientation = HORIZONTAL)
             : _spi(
-                  SPI(
-                      SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6),
-                      SPISettings(SPIEndianess::MSB, SPIMode::MODE3, SPIPrescale::PSC_8))),
+                  SPI::SPI(
+                      SPI::SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6),
+                      SPI::SPISettings(SPI::SPIEndianess::MSB, SPI::SPIMode::MODE3, SPI::SPIPrescale::PSC_8))),
               _rst(GPIO(PB1, GPIOMode::MODE_OUT_PP)),
               _cs(GPIO(PB2, GPIOMode::MODE_OUT_PP)),
               _dc(GPIO(PB0, GPIOMode::MODE_OUT_PP)),

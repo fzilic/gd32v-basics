@@ -24,13 +24,13 @@ enum ST7920Command : uint8_t
 class ST7920
 {
 private:
-    SPI _spi;
+    SPI::SPI _spi;
     GPIO _cs;
 
     void init();
 
 public:
-    ST7920(SPI spi,
+    ST7920(SPI::SPI spi,
            GPIO cs)
         : _spi(spi),
           _cs(cs)
