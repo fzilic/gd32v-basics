@@ -30,6 +30,26 @@ private:
     void init();
 
 public:
+    ST7920(SPI::SPIPort spiPort,
+           SPI::SPISettings spiSettings,
+           GPIO cs)
+        : ST7920(
+              SPI::SPI(
+                  spiPort,
+                  spiSettings),
+              cs){};
+
+    ST7920(SPI::SPIPort spiPort,
+           GPIO cs)
+        : ST7920(
+              SPI::SPI(
+                  spiPort,
+                  SPI::SPISettings(
+                      SPI::MSB,
+                      SPI::MODE3,
+                      SPI::PSC_256)),
+              cs){};
+
     ST7920(SPI::SPI spi,
            GPIO cs)
         : _spi(spi),
