@@ -12,12 +12,25 @@ enum SPIEndianess : uint32_t
     MSB = SPI_ENDIAN_MSB,
     LSB = SPI_ENDIAN_LSB
 };
+
 enum SPIMode : uint32_t
 {
     MODE0 = SPI_CK_PL_LOW_PH_1EDGE,
     MODE1 = SPI_CK_PL_HIGH_PH_1EDGE,
     MODE2 = SPI_CK_PL_LOW_PH_2EDGE,
     MODE3 = SPI_CK_PL_HIGH_PH_2EDGE
+};
+
+enum SPIPrescale : uint32_t
+{
+    PSC_2 = SPI_PSC_2,
+    PSC_4 = SPI_PSC_4,
+    PSC_8 = SPI_PSC_8,
+    PSC_16 = SPI_PSC_16,
+    PSC_32 = SPI_PSC_32,
+    PSC_64 = SPI_PSC_64,
+    PSC_128 = SPI_PSC_128,
+    PSC_256 = SPI_PSC_256
 };
 
 class SPIPort
@@ -42,8 +55,9 @@ class SPISettings
 public:
     SPIEndianess _endinaess;
     SPIMode _mode;
-    SPISettings(SPIEndianess endinaess, SPIMode mode)
-        : _endinaess(endinaess), _mode(mode){};
+    SPIPrescale _prescale;
+    SPISettings(SPIEndianess endinaess, SPIMode mode, SPIPrescale prescale = SPIPrescale::PSC_128)
+        : _endinaess(endinaess), _mode(mode), _prescale(prescale){};
 };
 
 class SPI
@@ -51,6 +65,8 @@ class SPI
 private:
     SPIPort _spi;
     SPISettings _settings;
+
+    spi_parameter_struct _params;
 
 public:
     SPI(SPIPort spi, SPISettings settings)

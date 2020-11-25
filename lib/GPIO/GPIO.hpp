@@ -49,18 +49,10 @@ private:
     void init();
 
 public:
-    GPIO(GPIOPin pin, GPIOMode mode, GPIOSpeed speed)
+    GPIO(GPIOPin pin, GPIOMode mode, GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
         : _pin(pin),
           _mode(mode),
           _speed(speed)
-    {
-        init();
-    };
-
-    GPIO(GPIOPin pin, GPIOMode mode)
-        : _pin(pin),
-          _mode(mode),
-          _speed(GPIOSpeed::SPEED_50MHZ)
     {
         init();
     };
