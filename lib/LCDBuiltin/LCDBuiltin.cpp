@@ -7,6 +7,7 @@
 
 void LCDBuiltin::init()
 {
+    _spi.begin();
     _rst.clear();
     delay_1ms(200);
     _rst.set();

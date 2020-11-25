@@ -30,8 +30,6 @@ void SPI::init()
     spi_init(_spi._spi_periph, &_params);
 
     spi_crc_polynomial_set(_spi._spi_periph, 7);
-
-    spi_enable(_spi._spi_periph);
 }
 
 uint8_t SPI::transmit(uint8_t data)
@@ -45,4 +43,14 @@ uint8_t SPI::transmit(uint8_t data)
         ;
 
     return spi_i2s_data_receive(_spi._spi_periph);
+}
+
+void SPI::begin()
+{
+    spi_enable(_spi._spi_periph);
+}
+
+void SPI::end()
+{
+    spi_disable(_spi._spi_periph);
 }

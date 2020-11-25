@@ -5,10 +5,10 @@
 #include "GPIO.hpp"
 #include "GPIO_pins.hpp"
 
-#define ST7920_LINE0       0x80
-#define ST7920_LINE1       0x90
-#define ST7920_LINE2       0x88
-#define ST7920_LINE3       0x98
+#define ST7920_LINE0 0x80
+#define ST7920_LINE1 0x90
+#define ST7920_LINE2 0x88
+#define ST7920_LINE3 0x98
 
 enum ST7920Command : uint8_t
 {
@@ -16,6 +16,8 @@ enum ST7920Command : uint8_t
     LCD_ADDRINC = 0x06,
     LCD_DISPLAYON = 0x0C,
     LCD_DISPLAYOFF = 0x08,
+    LCD_CURSORON = 0x0E,
+    LCD_CURSORBLINK = 0x0F,
     LCD_BASIC = 0x30,
 };
 
@@ -26,7 +28,6 @@ private:
     GPIO _cs;
 
     void init();
-    void send(uint8_t prefix, uint8_t data);
 
 public:
     ST7920(SPI spi, GPIO cs)
@@ -36,6 +37,7 @@ public:
         init();
     };
 
+    void send(uint8_t prefix, uint8_t data);
     void send(ST7920Command command);
     void send(uint8_t data);
 

@@ -78,6 +78,8 @@ public:
     void init();
 
     uint8_t transmit(const uint8_t data);
+    void begin();
+    void end();
 };
 
 #endif

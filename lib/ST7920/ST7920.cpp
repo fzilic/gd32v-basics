@@ -1,9 +1,6 @@
 #include "ST7920.hpp"
+#include "systick.hpp"
 
-// extern "C"
-// {
-// #include "systick.h"
-// }
 void ST7920::init()
 {
     _cs.clear();
@@ -11,18 +8,20 @@ void ST7920::init()
     send(LCD_BASIC);
     send(LCD_BASIC);
     send(LCD_CLS);
-    // delay_1ms(2);
+    delay_1ms(5);
     send(LCD_ADDRINC);
     send(LCD_DISPLAYON);
 }
 
 void ST7920::send(uint8_t prefix, uint8_t data)
 {
+    _spi.begin();
     _cs.set();
     _spi.transmit(prefix);
     _spi.transmit(data & 0xF0);
     _spi.transmit(data << 4);
     _cs.clear();
+    _spi.end();
 }
 
 void ST7920::send(ST7920Command command)
@@ -39,6 +38,6 @@ void ST7920::writeText(uint8_t position, char *str)
 {
     send(LCD_BASIC);
     send(position);
-    while (*str)
+    while (*str != '\0')
         send(*str++);
 }
