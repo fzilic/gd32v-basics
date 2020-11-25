@@ -10,20 +10,19 @@ int main(void)
     uint8_t cnt = 0;
     char dispBuffer[15];
 
-    LED led;
-    led.red();
+    LED::LED led;
+    led.set(LED::RED);
 
-    LCDBuiltin lcd;
-    lcd.clear(LCDBuiltinColor::WHITE);
+    LCDBuiltin::LCDBuiltin lcd;
+    lcd.clear(LCDBuiltin::LCDBuiltinColor::WHITE);
 
-    delay_1ms(200);
-    led.green();
+    delay_1ms(500);
+    led.set(LED::GREEN);
 
-    lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltinColor::BLACK);
-    lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltinColor::BLUE);
-    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltinColor::RED);
-    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltinColor::MAGENTA);
-    delay_1ms(200);
+    lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::BLACK);
+    lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::BLUE);
+    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::RED);
+    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::MAGENTA);
 
     // ST7920 lcdExtern(
     //     SPI(
@@ -34,26 +33,22 @@ int main(void)
     // lcdExtern.writeText(ST7920_LINE0, (char *)"Hello");
     // lcdExtern.writeText(ST7920_LINE1 + 4, (char *)"world");
 
-    GPIO tPin(PB9, GPIOMode::MODE_OUT_PP);
-
-    delay_1ms(200);
+    delay_1ms(500);
 
     while (1)
     {
-        led.blue();
+        led.set(LED::MAGENTA);
         sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltinColor::BLACK);
+        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::LCDBuiltinColor::BLACK);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
-        tPin.set();
-        delay_1ms(200L);
+        delay_1ms(200);
 
-        led.black();
+        led.set(LED::BLACK);
         sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltinColor::BLACK);
+        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::LCDBuiltinColor::BLACK);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
-        tPin.clear();
-        delay_1ms(200L);
+        delay_1ms(200);
     }
 }

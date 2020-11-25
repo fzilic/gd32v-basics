@@ -3,28 +3,33 @@
 
 #include "GPIO_pins.hpp"
 
-class LED
+namespace LED
 {
-private:
-    GPIO _red;
-    GPIO _green;
-    GPIO _blue;
-
-public:
-    LED()
-        : _red(GPIO(PC13, GPIOMode::MODE_OUT_PP)),
-          _green(GPIO(PA1, GPIOMode::MODE_OUT_PP)),
-          _blue(GPIO(PA2, GPIOMode::MODE_OUT_PP))
+    enum LEDColor : uint8_t
     {
-        init();
+        BLACK = 0x00,
+        RED = 0x04,
+        YELLOW = 0x06,
+        GREEN = 0x02,
+        CYAN = 0x03,
+        BLUE = 0x01,
+        MAGENTA = 0x05,
+        WHITE = 0x07
     };
 
-    void init();
-    void red();
-    void green();
-    void blue();
-    void white();
-    void black();
-};
+    class LED
+    {
+    private:
+        GPIO _pins[3] = {
+            GPIO(PA2, GPIOMode::MODE_OUT_PP),
+            GPIO(PA1, GPIOMode::MODE_OUT_PP),
+            GPIO(PC13, GPIOMode::MODE_OUT_PP)};
+
+    public:
+        LED();
+        void init();
+        void set(LEDColor color);
+    };
+}; // namespace LED
 
 #endif

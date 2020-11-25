@@ -1,43 +1,26 @@
 #include "LED.hpp"
 
-void LED::init()
+namespace LED
 {
-    _red.set();
-    _green.set();
-    _blue.set();
-}
+    LED::LED()
+    {
+        init();
+    }
 
-void LED::red()
-{
-    _red.clear();
-    _green.set();
-    _blue.set();
-}
+    void LED::init()
+    {
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            _pins[i].set();
+        }
+    }
 
-void LED::green()
-{
-    _red.set();
-    _green.clear();
-    _blue.set();
-}
-
-void LED::blue()
-{
-    _red.set();
-    _green.set();
-    _blue.clear();
-}
-
-void LED::white()
-{
-    _red.clear();
-    _green.clear();
-    _blue.clear();
-}
-
-void LED::black()
-{
-    _red.set();
-    _green.set();
-    _blue.set();
-}
+    void LED::set(LEDColor color)
+    {
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            _pins[i].write(
+                ~((color & (0x01 << i)) >> i));
+        }
+    }
+} // namespace LED

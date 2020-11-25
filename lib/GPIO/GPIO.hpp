@@ -47,6 +47,7 @@ private:
     GPIOSpeed _speed;
 
     void init();
+    FlagStatus status(uint8_t value);
 
 public:
     GPIO(GPIOPin pin, GPIOMode mode, GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
@@ -59,6 +60,10 @@ public:
 
     void set();
     void clear();
+    
+    bool read();
+
+    void write(uint8_t value);
 };
 
 #endif
