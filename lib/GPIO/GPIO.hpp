@@ -29,7 +29,9 @@ enum GPIOSpeed : uint32_t
 class GPIOPin
 {
 public:
-    GPIOPin(rcu_periph_enum rcu_periph, uint32_t gpio_periph, uint32_t pin)
+    GPIOPin(rcu_periph_enum rcu_periph,
+            uint32_t gpio_periph,
+            uint32_t pin)
         : _rcu_periph(rcu_periph),
           _gpio_periph(gpio_periph),
           _pin(pin){};
@@ -50,7 +52,9 @@ private:
     FlagStatus status(uint8_t value);
 
 public:
-    GPIO(GPIOPin pin, GPIOMode mode, GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
+    GPIO(GPIOPin pin,
+         GPIOMode mode,
+         GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
         : _pin(pin),
           _mode(mode),
           _speed(speed)
@@ -60,7 +64,7 @@ public:
 
     void set();
     void clear();
-    
+
     bool read();
 
     void write(uint8_t value);
