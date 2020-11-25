@@ -39,5 +39,5 @@ bool GPIO::read()
 
 FlagStatus GPIO::status(uint8_t value)
 {
-    return value & 0x01 ? FlagStatus::SET : FlagStatus::RESET;
+    return value > 0 ? FlagStatus::SET : FlagStatus::RESET;
 }

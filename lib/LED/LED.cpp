@@ -20,7 +20,7 @@ namespace LED
         for (uint8_t i = 0; i < 3; i++)
         {
             _pins[i].write(
-                ~((color & (0x01 << i)) >> i));
+                !((color & (0x01 << i))));
         }
     }
 } // namespace LED
