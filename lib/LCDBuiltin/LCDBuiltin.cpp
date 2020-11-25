@@ -2,8 +2,6 @@
 #include "LCDBuiltin_font.hpp"
 #include "systick.hpp"
 
-#define LCD_W 160
-#define LCD_H 80
 namespace LCDBuiltin
 {
 
@@ -163,6 +161,11 @@ namespace LCDBuiltin
         _dc.set();
         write(data >> 8);
         write(data);
+    }
+
+    void LCDBuiltin::clear()
+    {
+        clear(_backColor);
     }
 
     void LCDBuiltin::clear(LCDBuiltinColor color)

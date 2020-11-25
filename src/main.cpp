@@ -13,16 +13,16 @@ int main(void)
     LED::LED led;
     led.set(LED::RED);
 
-    LCDBuiltin::LCDBuiltin lcd;
-    lcd.clear(LCDBuiltin::LCDBuiltinColor::WHITE);
+    LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
+    lcd.clear();
 
     delay_1ms(500);
     led.set(LED::GREEN);
 
-    lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::BLACK);
-    lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::BLUE);
-    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::RED);
-    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltin::LCDBuiltinColor::MAGENTA);
+    lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::WHITE);
+    lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltin::BLUE);
+    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltin::RED);
+    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltin::MAGENTA);
 
     // ST7920 lcdExtern(
     //     SPI(
@@ -39,14 +39,14 @@ int main(void)
     {
         led.set(LED::MAGENTA);
         sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::LCDBuiltinColor::BLACK);
+        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
         delay_1ms(200);
 
         led.set(LED::BLACK);
         sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::LCDBuiltinColor::BLACK);
+        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
         delay_1ms(200);

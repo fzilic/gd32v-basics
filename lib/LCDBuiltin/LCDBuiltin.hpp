@@ -66,14 +66,14 @@ namespace LCDBuiltin
 
     public:
         LCDBuiltinColor _backColor;
-        LCDBuiltin(LCDBuiltinOrientation orientation = HORIZONTAL)
+        LCDBuiltin(LCDBuiltinColor backColor = WHITE, LCDBuiltinOrientation orientation = HORIZONTAL)
             : _spi(SPI(SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6),
                        SPISettings(SPIEndianess::MSB, SPIMode::MODE3, SPIPrescale::PSC_8))),
               _rst(GPIO(PB1, GPIOMode::MODE_OUT_PP)),
               _cs(GPIO(PB2, GPIOMode::MODE_OUT_PP)),
               _dc(GPIO(PB0, GPIOMode::MODE_OUT_PP)),
               _orientation(orientation),
-              _backColor(LCDBuiltinColor::WHITE)
+              _backColor(backColor)
         {
             init();
         };
@@ -81,12 +81,13 @@ namespace LCDBuiltin
         void writeData8(uint8_t data);
         void writeData16(uint16_t data);
 
+        void clear();
         void clear(LCDBuiltinColor color);
 
         void writeString(uint16_t x, uint16_t y, const char *data, LCDBuiltinColor color);
         void setAddress(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
     };
 
-}; // namespace colorLCDBuiltin
+}; // namespace LCDBuiltin
 
 #endif
