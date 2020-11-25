@@ -42,8 +42,18 @@ public:
     uint32_t _gpio;
     uint32_t _out;
     uint32_t _in;
-    SPIPort(uint32_t spi_periph, rcu_periph_enum rcu_gpio_periph, rcu_periph_enum rcu_spi_periph, uint32_t gpio, uint32_t out, uint32_t in)
-        : _spi_periph(spi_periph), _rcu_gpio_periph(rcu_gpio_periph), _rcu_spi_periph(rcu_spi_periph), _gpio(gpio), _out(out), _in(in){};
+    SPIPort(uint32_t spi_periph,
+            rcu_periph_enum rcu_gpio_periph,
+            rcu_periph_enum rcu_spi_periph,
+            uint32_t gpio,
+            uint32_t out,
+            uint32_t in)
+        : _spi_periph(spi_periph),
+          _rcu_gpio_periph(rcu_gpio_periph),
+          _rcu_spi_periph(rcu_spi_periph),
+          _gpio(gpio),
+          _out(out),
+          _in(in){};
 };
 
 #define SPI_0 SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6)
@@ -56,8 +66,12 @@ public:
     SPIEndianess _endinaess;
     SPIMode _mode;
     SPIPrescale _prescale;
-    SPISettings(SPIEndianess endinaess, SPIMode mode, SPIPrescale prescale = SPIPrescale::PSC_128)
-        : _endinaess(endinaess), _mode(mode), _prescale(prescale){};
+    SPISettings(SPIEndianess endinaess,
+                SPIMode mode,
+                SPIPrescale prescale = SPIPrescale::PSC_128)
+        : _endinaess(endinaess),
+          _mode(mode),
+          _prescale(prescale){};
 };
 
 class SPI
@@ -69,8 +83,10 @@ private:
     spi_parameter_struct _params;
 
 public:
-    SPI(SPIPort spi, SPISettings settings)
-        : _spi(spi), _settings(settings)
+    SPI(SPIPort spi,
+        SPISettings settings)
+        : _spi(spi),
+          _settings(settings)
     {
         init();
     };

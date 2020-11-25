@@ -30,7 +30,8 @@ private:
     void init();
 
 public:
-    ST7920(SPI spi, GPIO cs)
+    ST7920(SPI spi,
+           GPIO cs)
         : _spi(spi),
           _cs(cs)
     {
