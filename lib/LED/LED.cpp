@@ -2,15 +2,13 @@
 
 namespace LED
 {
-    LED::LED()
-    {
-        init();
-    }
 
     void LED::init()
     {
         for (uint8_t i = 0; i < 3; i++)
         {
+            // initialize device
+            _pins[i].init();
             _pins[i].set();
         }
     }
@@ -23,4 +21,5 @@ namespace LED
                 !((color & (0x01 << i))));
         }
     }
+
 } // namespace LED

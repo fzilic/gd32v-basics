@@ -1,6 +1,14 @@
 {
     "files.associations": {
         "limits": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "cstdarg": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp",
+        "type_traits": "cpp",
+        "typeinfo": "cpp"
     }
 }

@@ -55,7 +55,6 @@ namespace GPIO
         GPIOMode _mode;
         GPIOSpeed _speed;
 
-        void init();
         FlagStatus status(uint8_t value);
 
     public:
@@ -64,10 +63,9 @@ namespace GPIO
              GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
             : _pin(pin),
               _mode(mode),
-              _speed(speed)
-        {
-            init();
-        };
+              _speed(speed) {}
+
+        void init();
 
         void set();
         void clear();

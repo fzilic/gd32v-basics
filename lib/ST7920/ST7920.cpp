@@ -3,6 +3,11 @@
 
 void ST7920::init()
 {
+    // initialize devices
+    _spi.init();
+    _cs.init();
+
+    // initialize display
     _cs.clear();
 
     send(LCD_BASIC);

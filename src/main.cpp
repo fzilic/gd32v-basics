@@ -1,21 +1,26 @@
 #include "LED.hpp"
 #include "ST7920.hpp"
+#include "SSD1306.hpp"
 #include "LCDBuiltin.hpp"
 #include "systick.hpp"
 
 #include <stdio.h>
 
+uint8_t cnt = 0;
+char dispBuffer[15];
+
+LED::LED led;
+LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
+
 int main(void)
 {
-    uint8_t cnt = 0;
-    char dispBuffer[15];
+    // initialize devices
+    led.init();
+    lcd.init();
 
-    LED::LED led;
     led.set(LED::RED);
-
-    LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
     lcd.clear();
-
+    
     delay_1ms(500);
     led.set(LED::GREEN);
 

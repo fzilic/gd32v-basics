@@ -74,10 +74,10 @@ namespace I2C
     {
         startBus(address);
 
-        for (uint32_t i; i < size; i++)
+        while (size--)
         {
             // data transmission and wait for empty
-            i2c_data_transmit(_port.i2c_periph(), data[i]);
+            i2c_data_transmit(_port.i2c_periph(), *(data++));
             while (!i2c_flag_get(_port.i2c_periph(), I2C_FLAG_TBE))
                 ;
         }

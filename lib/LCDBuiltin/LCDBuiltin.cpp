@@ -7,6 +7,13 @@ namespace LCDBuiltin
 
     void LCDBuiltin::init()
     {
+        // initialize devices
+        _spi.init();
+        _rst.init();
+        _cs.init();
+        _dc.init();
+
+        // initialize display
         _spi.begin();
         _rst.clear();
         delay_1ms(200);

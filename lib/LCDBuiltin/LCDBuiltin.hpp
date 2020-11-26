@@ -57,8 +57,6 @@ namespace LCDBuiltin
         uint16_t _dispHeight;
         uint16_t _dispWidth;
 
-        void init();
-
         void writeCommandRaw(uint8_t data);
         void write(uint8_t data);
         void writeChar(uint16_t x, uint16_t y, uint8_t value, LCDBuiltinColor color, LCDBuiltinMode mode = NON_OVERLAPPING);
@@ -75,10 +73,9 @@ namespace LCDBuiltin
               _cs(GPIO::GPIO(PB2, GPIO::MODE_OUT_PP)),
               _dc(GPIO::GPIO(PB0, GPIO::MODE_OUT_PP)),
               _orientation(orientation),
-              _backColor(backColor)
-        {
-            init();
-        };
+              _backColor(backColor) {}
+
+        void init();
 
         void writeData8(uint8_t data);
         void writeData16(uint16_t data);

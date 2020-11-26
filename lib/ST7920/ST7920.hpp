@@ -27,8 +27,6 @@ private:
     SPI::SPI _spi;
     GPIO::GPIO _cs;
 
-    void init();
-
 public:
     ST7920(SPI::SPIPort spiPort,
            SPI::SPISettings spiSettings,
@@ -37,7 +35,7 @@ public:
               SPI::SPI(
                   spiPort,
                   spiSettings),
-              cs){};
+              cs) {}
 
     ST7920(SPI::SPIPort spiPort,
            GPIO::GPIO cs)
@@ -48,15 +46,14 @@ public:
                       SPI::MSB,
                       SPI::MODE3,
                       SPI::PSC_256)),
-              cs){};
+              cs) {}
 
     ST7920(SPI::SPI spi,
            GPIO::GPIO cs)
         : _spi(spi),
-          _cs(cs)
-    {
-        init();
-    };
+          _cs(cs) {}
+
+    void init();
 
     void send(uint8_t prefix, uint8_t data);
     void send(ST7920Command command);

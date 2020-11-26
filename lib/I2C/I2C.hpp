@@ -54,7 +54,7 @@ namespace I2C
 
     public:
         I2CSettings()
-            : I2CSettings(100000, DUTY_1_2, ADDR_7) {}
+            : I2CSettings(100000UL, DUTY_1_2, ADDR_7) {}
         I2CSettings(uint32_t clock,
                     I2CDutyCycle duty_cycle,
                     I2CAddressFormat addr_mode)
@@ -74,8 +74,6 @@ namespace I2C
         I2CPort _port;
         I2CSettings _settings;
 
-        void init();
-
         void startBus(uint32_t address);
         void stopBus();
 
@@ -83,11 +81,10 @@ namespace I2C
         I2C(I2CPort port,
             I2CSettings settings)
             : _port(port),
-              _settings(settings)
-        {
-            init();
-        };
+              _settings(settings) {}
 
+        void init();
+        
         void begin();
         void end();
 

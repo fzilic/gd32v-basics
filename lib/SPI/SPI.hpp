@@ -101,16 +101,13 @@ namespace SPI
 
         spi_parameter_struct _params;
 
-        void init();
-
     public:
         SPI(SPIPort spi,
             SPISettings settings)
             : _spi(spi),
-              _settings(settings)
-        {
-            init();
-        }
+              _settings(settings) {}
+
+        void init();
 
         void begin();
         void end();
