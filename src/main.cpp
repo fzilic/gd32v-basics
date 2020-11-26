@@ -20,7 +20,7 @@ int main(void)
 
     led.set(LED::RED);
     lcd.clear();
-    
+
     delay_1ms(500);
     led.set(LED::GREEN);
 
@@ -37,6 +37,7 @@ int main(void)
 
     // lcdExtern.writeText(ST7920_LINE0, (char *)"Hello");
     // lcdExtern.writeText(ST7920_LINE1 + 4, (char *)"world");
+
 
     delay_1ms(500);
 

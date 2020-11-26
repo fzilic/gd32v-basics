@@ -54,6 +54,12 @@ namespace SSD1306
 
         void clearDisplay();
         void display();
+
+        // void setTextSize(uint8_t size);
+        // void setTextColor(uint16_t color);
+        // void setCursor(int16_t x, int16_t y);
+        // void cp437();
+        // void write();
     };
 
 }; // namespace SSD1306

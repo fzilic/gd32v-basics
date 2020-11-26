@@ -50,6 +50,7 @@ namespace SSD1306
 
         clearDisplay();
 
+        // TODO this might be too verbose, after getting display working, try by just sending one big array
         const uint8_t init1[] = {
             DISPLAY_OFF,
             SET_DISPLAYCLOCK_DIV,
@@ -111,6 +112,11 @@ namespace SSD1306
         commands(init5, sizeof(init5));
 
         return true;
+    }
+
+    void SSD1306::clearDisplay()
+    {
+        std::memset(_buffer, 0, _width * ((_height + 7) / 8));
     }
 
     void SSD1306::display()
