@@ -25,14 +25,14 @@ class ST7920
 {
 private:
     SPI::SPI _spi;
-    GPIO _cs;
+    GPIO::GPIO _cs;
 
     void init();
 
 public:
     ST7920(SPI::SPIPort spiPort,
            SPI::SPISettings spiSettings,
-           GPIO cs)
+           GPIO::GPIO cs)
         : ST7920(
               SPI::SPI(
                   spiPort,
@@ -40,7 +40,7 @@ public:
               cs){};
 
     ST7920(SPI::SPIPort spiPort,
-           GPIO cs)
+           GPIO::GPIO cs)
         : ST7920(
               SPI::SPI(
                   spiPort,
@@ -51,7 +51,7 @@ public:
               cs){};
 
     ST7920(SPI::SPI spi,
-           GPIO cs)
+           GPIO::GPIO cs)
         : _spi(spi),
           _cs(cs)
     {

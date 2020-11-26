@@ -50,9 +50,9 @@ namespace LCDBuiltin
     {
     private:
         SPI::SPI _spi;
-        GPIO _rst;
-        GPIO _cs;
-        GPIO _dc;
+        GPIO::GPIO _rst;
+        GPIO::GPIO _cs;
+        GPIO::GPIO _dc;
         LCDBuiltinOrientation _orientation;
         uint16_t _dispHeight;
         uint16_t _dispWidth;
@@ -71,9 +71,9 @@ namespace LCDBuiltin
                   SPI::SPI(
                       SPI::SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6),
                       SPI::SPISettings(SPI::SPIEndianess::MSB, SPI::SPIMode::MODE3, SPI::SPIPrescale::PSC_8))),
-              _rst(GPIO(PB1, GPIOMode::MODE_OUT_PP)),
-              _cs(GPIO(PB2, GPIOMode::MODE_OUT_PP)),
-              _dc(GPIO(PB0, GPIOMode::MODE_OUT_PP)),
+              _rst(GPIO::GPIO(PB1, GPIO::MODE_OUT_PP)),
+              _cs(GPIO::GPIO(PB2, GPIO::MODE_OUT_PP)),
+              _dc(GPIO::GPIO(PB0, GPIO::MODE_OUT_PP)),
               _orientation(orientation),
               _backColor(backColor)
         {

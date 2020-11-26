@@ -20,10 +20,10 @@ namespace LED
     class LED
     {
     private:
-        GPIO _pins[3] = {
-            GPIO(PA2, GPIOMode::MODE_OUT_PP),
-            GPIO(PA1, GPIOMode::MODE_OUT_PP),
-            GPIO(PC13, GPIOMode::MODE_OUT_PP)};
+        GPIO::GPIO _pins[3] = {
+            GPIO::GPIO(PA2, GPIO::MODE_OUT_PP),
+            GPIO::GPIO(PA1, GPIO::MODE_OUT_PP),
+            GPIO::GPIO(PC13, GPIO::MODE_OUT_PP)};
 
     public:
         LED();

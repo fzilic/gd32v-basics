@@ -5,6 +5,7 @@ extern "C"
 {
 #include "gd32vf103_spi.h"
 }
+
 #include <stdint.h>
 
 namespace SPI
@@ -42,13 +43,15 @@ namespace SPI
 
     class SPIPort
     {
-    public:
+    private:
         uint32_t _spi_periph;
         rcu_periph_enum _rcu_gpio_periph;
         rcu_periph_enum _rcu_spi_periph;
         uint32_t _gpio;
         uint32_t _out;
         uint32_t _in;
+
+    public:
         SPIPort(uint32_t spi_periph,
                 rcu_periph_enum rcu_gpio_periph,
                 rcu_periph_enum rcu_spi_periph,
@@ -60,21 +63,34 @@ namespace SPI
               _rcu_spi_periph(rcu_spi_periph),
               _gpio(gpio),
               _out(out),
-              _in(in){};
+              _in(in) {}
+
+        uint32_t spi_periph() { return _spi_periph; }
+        rcu_periph_enum rcu_gpio_periph() { return _rcu_gpio_periph; }
+        rcu_periph_enum rcu_spi_periph() { return _rcu_spi_periph; }
+        uint32_t gpio() { return _gpio; }
+        uint32_t out() { return _out; }
+        uint32_t in() { return _in; }
     };
 
     class SPISettings
     {
-    public:
+    private:
         SPIEndianess _endinaess;
         SPIMode _mode;
         SPIPrescale _prescale;
+
+    public:
         SPISettings(SPIEndianess endinaess,
                     SPIMode mode,
                     SPIPrescale prescale = SPIPrescale::PSC_128)
             : _endinaess(endinaess),
               _mode(mode),
-              _prescale(prescale){};
+              _prescale(prescale) {}
+
+        SPIEndianess endinaess() { return _endinaess; }
+        SPIMode mode() { return _mode; }
+        SPIPrescale prescale() { return _prescale; }
     };
 
     class SPI
@@ -85,6 +101,8 @@ namespace SPI
 
         spi_parameter_struct _params;
 
+        void init();
+
     public:
         SPI(SPIPort spi,
             SPISettings settings)
@@ -92,14 +110,14 @@ namespace SPI
               _settings(settings)
         {
             init();
-        };
+        }
 
-        void init();
-
-        uint8_t transfer(const uint8_t data);
         void begin();
         void end();
+
+        uint8_t transfer(const uint8_t data);
     };
+
 }; // namespace SPI
 
 #endif
