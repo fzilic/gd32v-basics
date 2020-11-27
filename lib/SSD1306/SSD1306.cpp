@@ -36,9 +36,9 @@ namespace SSD1306
 
             // reset display
             _reset.set();
-            delay_1ms(1);
+            delay(1);
             _reset.clear();
-            delay_1ms(10);
+            delay(10);
             _reset.set();
         }
 

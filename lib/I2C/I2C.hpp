@@ -10,8 +10,8 @@ extern "C"
 namespace I2C
 {
 
-#define I2C_0 I2CPort(I2C0, RCU_I2C0, GPIO_PIN_6 | GPIO_PIN_7)
-#define I2C_1 I2CPort(I2C1, RCU_I2C0, GPIO_PIN_10 | GPIO_PIN_11)
+#define I2C_0 I2C::I2CPort(I2C0, RCU_I2C0, GPIO_PIN_6 | GPIO_PIN_7)
+#define I2C_1 I2C::I2CPort(I2C1, RCU_I2C1, GPIO_PIN_10 | GPIO_PIN_11)
 
     enum I2CDutyCycle : uint32_t
     {
@@ -67,7 +67,6 @@ namespace I2C
         I2CAddressFormat addr_mode() { return _addr_mode; }
     };
 
-    // I2C0
     class I2C
     {
     private:
@@ -78,13 +77,15 @@ namespace I2C
         void stopBus();
 
     public:
+        I2C(I2CPort port)
+            : I2C(port, I2CSettings()) {}
         I2C(I2CPort port,
             I2CSettings settings)
             : _port(port),
               _settings(settings) {}
 
         void init();
-        
+
         void begin();
         void end();
 

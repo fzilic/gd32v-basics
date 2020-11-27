@@ -16,14 +16,14 @@ namespace LCDBuiltin
         // initialize display
         _spi.begin();
         _rst.clear();
-        delay_1ms(200);
+        delay(200);
         _rst.set();
-        delay_1ms(20);
+        delay(20);
 
         // optional BLK?
 
         writeCommandRaw(0x11); // turn off sleep mode
-        delay_1ms(100);
+        delay(100);
 
         writeCommandRaw(0x21); // display inversion mode
 

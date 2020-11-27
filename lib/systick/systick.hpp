@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
-void delay_1ms(uint32_t count);
+void delay(uint32_t count);
+
+void delayMicroseconds(uint32_t count);
 
 #endif

@@ -13,7 +13,7 @@ void ST7920::init()
     send(LCD_BASIC);
     send(LCD_BASIC);
     send(LCD_CLS);
-    delay_1ms(5);
+    delay(5);
     send(LCD_ADDRINC);
     send(LCD_DISPLAYON);
 }

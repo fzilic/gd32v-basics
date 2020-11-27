@@ -21,7 +21,7 @@ int main(void)
     led.set(LED::RED);
     lcd.clear();
 
-    delay_1ms(500);
+    delay(500);
     led.set(LED::GREEN);
 
     lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::WHITE);

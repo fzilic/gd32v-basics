@@ -13,8 +13,6 @@ namespace I2C
         gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, _port.pin()); // I2C buses are on PortB
 
         i2c_clock_config(_port.i2c_periph(), _settings.clock(), _settings.duty_cycle());
-
-        // i2c_mode_addr_config(_port.i2c_periph(), I2C_I2CMODE_ENABLE, _settings.addr_mode(), 0x00); // This chould be Slave stuff
     }
 
     void I2C::startBus(uint32_t address)
@@ -55,7 +53,7 @@ namespace I2C
 
     void I2C::end()
     {
-        i2c_disable(_port.i2c_periph());
+        // i2c_disable(_port.i2c_periph());
     }
 
     void I2C::transmit(uint32_t address, uint8_t data)
