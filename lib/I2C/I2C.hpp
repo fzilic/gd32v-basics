@@ -16,7 +16,7 @@ namespace I2C
     enum I2CDutyCycle : uint32_t
     {
         DUTY_1_2 = I2C_DTCY_2,
-        DUTY_9_16 = I2C_DTCY_16_9
+        DUTY_16_9 = I2C_DTCY_16_9
     };
 
     enum I2CAddressFormat : uint32_t
@@ -55,6 +55,8 @@ namespace I2C
     public:
         I2CSettings()
             : I2CSettings(100000UL, DUTY_1_2, ADDR_7) {}
+        I2CSettings(uint32_t clock)
+            : I2CSettings(clock, DUTY_1_2, ADDR_7) {}
         I2CSettings(uint32_t clock,
                     I2CDutyCycle duty_cycle,
                     I2CAddressFormat addr_mode)
@@ -72,6 +74,7 @@ namespace I2C
     private:
         I2CPort _port;
         I2CSettings _settings;
+        bool _transmitting;
 
         void startBus(uint32_t address);
         void stopBus();
@@ -91,6 +94,11 @@ namespace I2C
 
         void transmit(uint32_t address, uint8_t data);
         void transmit(uint32_t address, uint8_t *data, uint32_t size);
+
+        bool isTransmitting()
+        {
+            return _transmitting;
+        }
     };
 
 } // namespace I2C
