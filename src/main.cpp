@@ -39,7 +39,7 @@ int main(void)
     // lcdExtern.writeText(ST7920_LINE1 + 4, (char *)"world");
 
 
-    delay_1ms(500);
+    delay(500);
 
     while (1)
     {
@@ -48,13 +48,13 @@ int main(void)
         lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
-        delay_1ms(200);
+        delay(200);
 
         led.set(LED::BLACK);
         sprintf(dispBuffer, "Cnt:       %03d", cnt);
         lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
         // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
         cnt++;
-        delay_1ms(200);
+        delay(200);
     }
 }
