@@ -1,15 +1,15 @@
 
-#ifndef __SYSTICK_H
-#define __SYSTICK_H
+#ifndef __TIMER_H
+#define __TIMER_H
 
-#include "systick.hpp"
+#include "Timer.hpp"
 
 extern "C"
 {
 #include "gd32vf103.h"
 }
 
-void delay(uint32_t count)
+void Timer::delay(uint32_t count)
 {
     uint64_t start_mtime, delta_mtime;
 
@@ -26,7 +26,7 @@ void delay(uint32_t count)
     } while (delta_mtime < (SystemCoreClock / 4000.0 * count));
 }
 
-void delayMicroseconds(uint32_t count)
+void Timer::delayMicroseconds(uint32_t count)
 {
     uint64_t start_mtime, delta_mtime;
 
@@ -40,7 +40,17 @@ void delayMicroseconds(uint32_t count)
     do
     {
         delta_mtime = get_timer_value() - start_mtime;
-    } while (delta_mtime < (SystemCoreClock / 4.0 * count));
+    } while (delta_mtime < (SystemCoreClock / 4000000.0 * count));
+}
+
+uint64_t Timer::millis()
+{
+    return get_timer_value() * 4000 / SystemCoreClock;
+}
+
+uint64_t Timer::micros()
+{
+    return get_timer_value() * 4000000 / SystemCoreClock;
 }
 
 #endif

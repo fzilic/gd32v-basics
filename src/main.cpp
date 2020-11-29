@@ -1,8 +1,6 @@
 #include "LED.hpp"
-// #include "ST7920.hpp"
-// #include "SSD1306.hpp"
 #include "LCDBuiltin.hpp"
-#include "systick.hpp"
+#include "Timer.hpp"
 
 #include "I2C.hpp"
 
@@ -11,9 +9,16 @@
 #include "u8g2.h"
 #include "u8x8.h"
 
-uint8_t cnt = 0;
+uint64_t micros, deltaMicros;
+uint64_t lcdMillis, lcdDeltaMillis;
+uint64_t ledMillis, ledDeltaMillis;
+
+volatile uint8_t cnt = 0;
+volatile uint64_t lastBootDebounce;
+
 char dispBuffer[15];
 
+LED::LEDColor ledColor;
 LED::LED led;
 LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL);
 
@@ -37,7 +42,7 @@ extern "C" uint8_t u8x8_gpio_and_delay_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t 
         break;
     case U8X8_MSG_DELAY_NANO:
         // delay arg_int * 1 nano second
-        delayMicroseconds(arg_int == 0 ? 0 : 1);
+        Timer::delayMicroseconds(arg_int == 0 ? 0 : 1);
         break;
     case U8X8_MSG_DELAY_100NANO:
         // delay arg_int * 100 nano seconds
@@ -49,13 +54,13 @@ extern "C" uint8_t u8x8_gpio_and_delay_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t 
         break;
     case U8X8_MSG_DELAY_MILLI:
         // delay arg_int * 1 milli second
-        delay(arg_int);
+        Timer::delay(arg_int);
         break;
     case U8X8_MSG_DELAY_I2C:
         // arg_int is the I2C speed in 100KHz, e.g. 4 = 400 KHz
         // arg_int=1: delay by 5us, arg_int = 4: delay by 1.25us
 
-        delayMicroseconds(arg_int <= 2 ? 5 : 2);
+        Timer::delayMicroseconds(arg_int <= 2 ? 5 : 2);
         break;
     case U8X8_MSG_GPIO_D0:
         // D0 or SPI clock pin: Output level in arg_int
@@ -377,43 +382,25 @@ uint8_t data[]{
     0x00, 0xB6, 0x40, 0x0F, 0x0F, 0x0F, 0x0F, 0xF0,
     0xF0, 0xF0, 0xF0};
 
+GPIO::GPIO boot = GPIO::GPIO(PA8, GPIO::MODE_IPU);
+
+void key_exti_init(void);
+extern "C" void EXTI5_9_IRQHandler(void);
+
 int main(void)
 {
     // initialize devices
     led.init();
     lcd.init();
+    boot.init();
+    key_exti_init();
 
     led.set(LED::RED);
     lcd.clear();
+    lcd.writeString(24, 0, (char *)"Booting...", LCDBuiltin::WHITE);
 
-    delay(500);
+    Timer::delay(500);
     led.set(LED::GREEN);
-
-    // lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::WHITE);
-    // lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltin::BLUE);
-    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltin::RED);
-    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltin::MAGENTA);
-
-    // ST7920 lcdExtern(
-    //     SPI(
-    //         SPIPort(SPI2, RCU_GPIOB, RCU_SPI2, GPIOB, GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5, NULL),
-    //         SPISettings(SPIEndianess::MSB, SPIMode::MODE3, SPIPrescale::PSC_256)),
-    //     GPIO(PB9, GPIOMode::MODE_OUT_PP));
-
-    // lcdExtern.writeText(ST7920_LINE0, (char *)"Hello");
-    // lcdExtern.writeText(ST7920_LINE1 + 4, (char *)"world");
-
-    lcd.writeString(24, 0, "u8x8 Setup    ", LCDBuiltin::WHITE);
-    u8x8_Setup(&u8x8, u8x8_d_ssd1306_128x64_noname, u8x8_cad_ssd13xx_fast_i2c, u8x8_byte_hw_i2c_gd32v, u8x8_gpio_and_delay_gd32v);
-
-    lcd.writeString(24, 0, "u8x8 Init     ", LCDBuiltin::WHITE);
-    u8x8_InitDisplay(&u8x8);
-
-    lcd.writeString(24, 0, "u8x8 CD       ", LCDBuiltin::WHITE);
-    u8x8_ClearDisplay(&u8x8);
-
-    lcd.writeString(24, 0, "u8x8 Set PS    ", LCDBuiltin::WHITE);
-    u8x8_SetPowerSave(&u8x8, 0);
 
     u8x8_SetFont(&u8x8, u8x8_font_chroma48medium8_r);
     u8x8_DrawString(&u8x8, 0, 0, "Hello World");
@@ -425,44 +412,84 @@ int main(void)
     u8x8_DrawTile(&u8x8, 5, 5, 1, tile);
     u8x8_DrawTile(&u8x8, 6, 6, 1, tile);
 
-    // u8g2_Setup_ssd1306_i2c_128x64_noname_1(&u8g2, U8G2_R0, u8x8_byte_hw_i2c_gd32v, u8x8_gpio_and_delay_gd32v);
-    // u8g2_InitDisplay(&u8g2);
-    // u8g2_SetPowerSave(&u8g2, 0);
+    Timer::delay(500);
+    lcd.writeString(24, 0, (char *)"Running...", LCDBuiltin::WHITE);
 
-    // u8g2_FirstPage(&u8g2);
-    // do
-    // {
-    //     u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
-    //     u8g2_DrawStr(&u8g2, 0, 15, "Hello World!");
-    // } while (u8g2_NextPage(&u8g2));
+    ledColor = LED::BLACK;
 
-    // lcd.writeString(24, 0, "I2C Init      ", LCDBuiltin::WHITE);
-    // i2c0.init();
-    // lcd.writeString(24, 0, "I2C Begin     ", LCDBuiltin::WHITE);
-    // i2c0.begin();
-    // lcd.writeString(24, 0, "I2C Send      ", LCDBuiltin::WHITE);
-    // // i2c0.transmit(0x3D, data, sizeof(data));
-    // for (uint32_t i = 0; i < sizeof(data); i++)
-    // {
-    //     i2c0.transmit(0x3C, data[i]);
-    // }
+    // test delay / millis
+    micros = Timer::micros();
 
-    delay(500);
+    // update intervals
+    lcdMillis = Timer::millis();
+    ledMillis = Timer::millis();
 
     while (1)
     {
-        led.set(LED::MAGENTA);
-        sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
-        // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
-        cnt++;
-        delay(200);
+        deltaMicros = Timer::micros() - micros;
+        lcdDeltaMillis = Timer::millis() - lcdMillis;
+        ledDeltaMillis = Timer::millis() - ledMillis;
 
-        led.set(LED::BLACK);
-        sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
-        // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
-        cnt++;
-        delay(200);
+        // lcd every 50ms
+        if (lcdDeltaMillis >= 50)
+        {
+            micros = Timer::micros();
+            lcdMillis = Timer::millis();
+
+            sprintf(dispBuffer, "Cnt:       %03d", cnt);
+            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::BLUE);
+
+            sprintf(dispBuffer, "us:    %07lu", deltaMicros);
+            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::RED);
+            sprintf(dispBuffer, "ms:    %07lu", lcdDeltaMillis);
+            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::YELLOW);
+
+            sprintf(dispBuffer, "xxxxxxxxxxxxxx");
+            lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);
+        }
+
+        if (ledDeltaMillis >= 500)
+        {
+            ledMillis = Timer::millis();
+            // toggle LED
+            if (ledColor == LED::BLACK)
+                ledColor = LED::MAGENTA;
+            else
+                ledColor = LED::BLACK;
+            led.set(ledColor);
+        }
+    }
+}
+
+void key_exti_init(void)
+{
+    /* enable the AF clock */
+    rcu_periph_clock_enable(RCU_AF);
+    /* enable and set key EXTI interrupt to the specified priority */
+    eclic_global_interrupt_enable();
+    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
+    eclic_irq_enable(EXTI5_9_IRQn, 1, 1);
+
+    /* connect key EXTI line to key GPIO pin */
+    gpio_exti_source_select(GPIO_PORT_SOURCE_GPIOA, GPIO_PIN_SOURCE_8);
+
+    /* configure key EXTI line */
+    exti_init(EXTI_8, EXTI_INTERRUPT, EXTI_TRIG_FALLING);
+    exti_interrupt_flag_clear(EXTI_8);
+}
+
+extern "C" void EXTI5_9_IRQHandler(void)
+{
+    if (RESET != exti_interrupt_flag_get(EXTI_8))
+    {
+
+        if (!boot.read() && (Timer::millis() - lastBootDebounce) > 40)
+        {
+            cnt++;
+        }
+
+        lastBootDebounce = Timer::millis();
+
+        exti_interrupt_flag_clear(EXTI_8);
     }
 }

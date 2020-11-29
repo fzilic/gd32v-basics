@@ -1,6 +1,6 @@
 #include "LCDBuiltin.hpp"
 #include "LCDBuiltin_font.hpp"
-#include "systick.hpp"
+#include "Timer.hpp"
 
 namespace LCDBuiltin
 {
@@ -16,14 +16,14 @@ namespace LCDBuiltin
         // initialize display
         _spi.begin();
         _rst.clear();
-        delay(200);
+        Timer::delay(200);
         _rst.set();
-        delay(20);
+        Timer::delay(20);
 
         // optional BLK?
 
         writeCommandRaw(0x11); // turn off sleep mode
-        delay(100);
+        Timer::delay(100);
 
         writeCommandRaw(0x21); // display inversion mode
 
