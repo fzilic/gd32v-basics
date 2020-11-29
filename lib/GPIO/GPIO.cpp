@@ -18,7 +18,7 @@ namespace GPIO
         gpio_bit_reset(_pin.gpio_periph(), _pin.pin());
     }
 
-    void GPIO::write(uint8_t value)
+    void GPIO::write(const uint8_t value)
     {
         gpio_bit_write(_pin.gpio_periph(), _pin.pin(), status(value));
     }
@@ -39,7 +39,7 @@ namespace GPIO
         }
     }
 
-    FlagStatus GPIO::status(uint8_t value)
+    constexpr FlagStatus GPIO::status(const uint8_t value)
     {
         return value > 0 ? FlagStatus::SET : FlagStatus::RESET;
     }

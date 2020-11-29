@@ -31,36 +31,36 @@ namespace GPIO
     class GPIOPin
     {
     private:
-        rcu_periph_enum _rcu_periph;
-        uint32_t _gpio_periph;
-        uint32_t _pin;
+        const rcu_periph_enum _rcu_periph;
+        const uint32_t _gpio_periph;
+        const uint32_t _pin;
 
     public:
-        GPIOPin(rcu_periph_enum rcu_periph,
-                uint32_t gpio_periph,
-                uint32_t pin)
+        GPIOPin(const rcu_periph_enum rcu_periph,
+                const uint32_t gpio_periph,
+                const uint32_t pin)
             : _rcu_periph(rcu_periph),
               _gpio_periph(gpio_periph),
               _pin(pin){};
 
-        rcu_periph_enum rcu_periph() { return _rcu_periph; }
-        uint32_t gpio_periph() { return _gpio_periph; }
-        uint32_t pin() { return _pin; }
+        constexpr rcu_periph_enum rcu_periph() const { return _rcu_periph; }
+        constexpr uint32_t gpio_periph() const { return _gpio_periph; }
+        constexpr uint32_t pin() const { return _pin; }
     };
 
     class GPIO
     {
     private:
-        GPIOPin _pin;
-        GPIOMode _mode;
-        GPIOSpeed _speed;
+        const GPIOPin _pin;
+        const GPIOMode _mode;
+        const GPIOSpeed _speed;
 
-        FlagStatus status(uint8_t value);
+        constexpr FlagStatus status(const uint8_t value);
 
     public:
-        GPIO(GPIOPin pin,
-             GPIOMode mode,
-             GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
+        GPIO(const GPIOPin pin,
+             const GPIOMode mode,
+             const GPIOSpeed speed = GPIOSpeed::SPEED_50MHZ)
             : _pin(pin),
               _mode(mode),
               _speed(speed) {}

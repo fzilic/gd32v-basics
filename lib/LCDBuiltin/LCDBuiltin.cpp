@@ -121,23 +121,15 @@ namespace LCDBuiltin
         {
         case VERTICAL:
             writeData8(0x08);
-            _dispHeight = 160;
-            _dispWidth = 80;
             break;
         case VERTICAL_FLIPPED:
             writeData8(0xC8);
-            _dispHeight = 160;
-            _dispWidth = 80;
             break;
         case HORIZONTAL:
             writeData8(0x78);
-            _dispHeight = 80;
-            _dispWidth = 160;
             break;
         default:
             writeData8(0xA8);
-            _dispHeight = 80;
-            _dispWidth = 160;
             break;
         }
 

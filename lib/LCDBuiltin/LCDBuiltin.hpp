@@ -54,6 +54,7 @@ namespace LCDBuiltin
         GPIO::GPIO _cs;
         GPIO::GPIO _dc;
         LCDBuiltinOrientation _orientation;
+        LCDBuiltinColor _backColor;
         uint16_t _dispHeight;
         uint16_t _dispWidth;
 
@@ -63,7 +64,6 @@ namespace LCDBuiltin
 
     public:
     public:
-        LCDBuiltinColor _backColor;
         LCDBuiltin()
             : LCDBuiltin(WHITE, HORIZONTAL) {}
         LCDBuiltin(LCDBuiltinColor backColor,
@@ -82,7 +82,9 @@ namespace LCDBuiltin
               _cs(GPIO::GPIO(PB2, GPIO::MODE_OUT_PP)),
               _dc(GPIO::GPIO(PB0, GPIO::MODE_OUT_PP)),
               _orientation(orientation),
-              _backColor(backColor) {}
+              _backColor(backColor),
+              _dispHeight(orientation == VERTICAL || orientation == VERTICAL_FLIPPED ? 160 : 80),
+              _dispWidth(orientation == VERTICAL || orientation == VERTICAL_FLIPPED ? 80 : 160) {}
 
         void init();
 

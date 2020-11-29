@@ -114,13 +114,13 @@ int main(void)
 #ifdef LCD_BUILTIN_DEMO
 #ifdef BOOT_COUNTER_DEMO
             sprintf(dispBuffer, "Cnt:       %03d", cnt);
-            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::BLUE);
+            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::YELLOW);
 #endif // BOOT_COUNTER_DEMO
 
             sprintf(dispBuffer, "us:    %07lu", deltaMicros);
-            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::RED);
+            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::DARKBLUE);
             sprintf(dispBuffer, "ms:    %07lu", lcdDeltaMillis);
-            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::YELLOW);
+            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::BLUE);
 
             sprintf(dispBuffer, "xxxxxxxxxxxxxx");
             lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);

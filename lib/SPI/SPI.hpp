@@ -44,20 +44,20 @@ namespace SPI
     class SPIPort
     {
     private:
-        uint32_t _spi_periph;
-        rcu_periph_enum _rcu_gpio_periph;
-        rcu_periph_enum _rcu_spi_periph;
-        uint32_t _gpio;
-        uint32_t _out;
-        uint32_t _in;
+        const uint32_t _spi_periph;
+        const rcu_periph_enum _rcu_gpio_periph;
+        const rcu_periph_enum _rcu_spi_periph;
+        const uint32_t _gpio;
+        const uint32_t _out;
+        const uint32_t _in;
 
     public:
-        SPIPort(uint32_t spi_periph,
-                rcu_periph_enum rcu_gpio_periph,
-                rcu_periph_enum rcu_spi_periph,
-                uint32_t gpio,
-                uint32_t out,
-                uint32_t in)
+        SPIPort(const uint32_t spi_periph,
+                const rcu_periph_enum rcu_gpio_periph,
+                const rcu_periph_enum rcu_spi_periph,
+                const uint32_t gpio,
+                const uint32_t out,
+                const uint32_t in)
             : _spi_periph(spi_periph),
               _rcu_gpio_periph(rcu_gpio_periph),
               _rcu_spi_periph(rcu_spi_periph),
@@ -65,45 +65,43 @@ namespace SPI
               _out(out),
               _in(in) {}
 
-        uint32_t spi_periph() { return _spi_periph; }
-        rcu_periph_enum rcu_gpio_periph() { return _rcu_gpio_periph; }
-        rcu_periph_enum rcu_spi_periph() { return _rcu_spi_periph; }
-        uint32_t gpio() { return _gpio; }
-        uint32_t out() { return _out; }
-        uint32_t in() { return _in; }
+        constexpr uint32_t spi_periph() const { return _spi_periph; }
+        constexpr rcu_periph_enum rcu_gpio_periph() const { return _rcu_gpio_periph; }
+        constexpr rcu_periph_enum rcu_spi_periph() const { return _rcu_spi_periph; }
+        constexpr uint32_t gpio() const { return _gpio; }
+        constexpr uint32_t out() const { return _out; }
+        constexpr uint32_t in() const { return _in; }
     };
 
     class SPISettings
     {
     private:
-        SPIEndianess _endinaess;
-        SPIMode _mode;
-        SPIPrescale _prescale;
+        const SPIEndianess _endinaess;
+        const SPIMode _mode;
+        const SPIPrescale _prescale;
 
     public:
-        SPISettings(SPIEndianess endinaess,
-                    SPIMode mode,
-                    SPIPrescale prescale = SPIPrescale::PSC_128)
+        SPISettings(const SPIEndianess endinaess,
+                    const SPIMode mode,
+                    const SPIPrescale prescale = SPIPrescale::PSC_128)
             : _endinaess(endinaess),
               _mode(mode),
               _prescale(prescale) {}
 
-        SPIEndianess endinaess() { return _endinaess; }
-        SPIMode mode() { return _mode; }
-        SPIPrescale prescale() { return _prescale; }
+        constexpr SPIEndianess endinaess() const { return _endinaess; }
+        constexpr SPIMode mode() const { return _mode; }
+        constexpr SPIPrescale prescale() const { return _prescale; }
     };
 
     class SPI
     {
     private:
-        SPIPort _spi;
-        SPISettings _settings;
-
-        spi_parameter_struct _params;
+        const SPIPort _spi;
+        const SPISettings _settings;
 
     public:
-        SPI(SPIPort spi,
-            SPISettings settings)
+        SPI(const SPIPort spi,
+            const SPISettings settings)
             : _spi(spi),
               _settings(settings) {}
 
@@ -112,7 +110,7 @@ namespace SPI
         void begin();
         void end();
 
-        uint8_t transfer(const uint8_t data);
+        const uint8_t transfer(const uint8_t data);
     };
 
 }; // namespace SPI

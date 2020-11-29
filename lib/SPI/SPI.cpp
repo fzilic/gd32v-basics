@@ -19,17 +19,18 @@ namespace SPI
         if (_spi.in())
             gpio_init(_spi.gpio(), GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, _spi.in());
 
-        spi_struct_para_init(&_params);
+        spi_parameter_struct params;
+        spi_struct_para_init(&params);
 
-        _params.device_mode = SPI_MASTER;
-        _params.trans_mode = SPI_TRANSMODE_FULLDUPLEX;
-        _params.frame_size = SPI_FRAMESIZE_8BIT;
-        _params.nss = SPI_NSS_SOFT;
-        _params.endian = _settings.endinaess();
-        _params.clock_polarity_phase = _settings.mode();
-        _params.prescale = _settings.prescale();
+        params.device_mode = SPI_MASTER;
+        params.trans_mode = SPI_TRANSMODE_FULLDUPLEX;
+        params.frame_size = SPI_FRAMESIZE_8BIT;
+        params.nss = SPI_NSS_SOFT;
+        params.endian = _settings.endinaess();
+        params.clock_polarity_phase = _settings.mode();
+        params.prescale = _settings.prescale();
 
-        spi_init(_spi.spi_periph(), &_params);
+        spi_init(_spi.spi_periph(), &params);
 
         spi_crc_polynomial_set(_spi.spi_periph(), 7);
     }
@@ -44,7 +45,7 @@ namespace SPI
         spi_disable(_spi.spi_periph());
     }
 
-    uint8_t SPI::transfer(uint8_t data)
+    const uint8_t SPI::transfer(uint8_t data)
     {
         while (RESET == spi_i2s_flag_get(_spi.spi_periph(), SPI_FLAG_TBE))
             ;

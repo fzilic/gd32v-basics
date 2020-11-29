@@ -26,9 +26,11 @@ namespace LED
             GPIO::GPIO(PC13, GPIO::MODE_OUT_PP)};
 
     public:
-        LED(){};
+        LED(){
+
+        };
         void init();
-        void set(LEDColor color);
+        void set(const LEDColor color);
     };
 }; // namespace LED
 

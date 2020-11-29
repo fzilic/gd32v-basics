@@ -13,7 +13,7 @@ namespace LED
         }
     }
 
-    void LED::set(LEDColor color)
+    void LED::set(const LEDColor color)
     {
         for (uint8_t i = 0; i < 3; i++)
         {
