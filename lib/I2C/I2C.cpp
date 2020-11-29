@@ -18,9 +18,10 @@ namespace I2C
 
     void I2C::startBus(uint32_t address)
     {
+
         // wait until I2C bus is idle
-        // while (i2c_flag_get(_port.i2c_periph(), I2C_FLAG_I2CBSY))
-        //     ;
+        while (i2c_flag_get(_port.i2c_periph(), I2C_FLAG_I2CBSY))
+            ;
 
         // send a start condition to I2C bus and wait for it
         i2c_start_on_bus(_port.i2c_periph());
@@ -31,13 +32,14 @@ namespace I2C
         i2c_master_addressing(_port.i2c_periph(), address << 1, I2C_TRANSMITTER);
         while (!i2c_flag_get(_port.i2c_periph(), I2C_FLAG_ADDSEND))
             ;
+
         i2c_flag_clear(_port.i2c_periph(), I2C_FLAG_ADDSEND);
 
-        //wait until the transmit data buffer is empty
-        // while (!i2c_flag_get(_port.i2c_periph(), I2C_FLAG_TBE))
-        //     ;
+        // wait until the transmit data buffer is empty
+        while (!i2c_flag_get(_port.i2c_periph(), I2C_FLAG_TBE))
+            ;
 
-        i2c_ack_config(_port.i2c_periph(), I2C_ACK_ENABLE);
+        // i2c_ack_config(_port.i2c_periph(), I2C_ACK_ENABLE);
     }
 
     void I2C::stopBus()
@@ -66,6 +68,7 @@ namespace I2C
 
     void I2C::transmit(uint32_t address, uint8_t data)
     {
+
         startBus(address);
 
         // data transmission and wait for empty
@@ -78,6 +81,8 @@ namespace I2C
 
     void I2C::transmit(uint32_t address, uint8_t *data, uint32_t size)
     {
+        uint64_t millis;
+
         startBus(address);
 
         while (size--)

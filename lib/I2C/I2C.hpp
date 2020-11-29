@@ -5,6 +5,7 @@ extern "C"
 {
 #include "gd32vf103_i2c.h"
 }
+
 #include <stdint.h>
 
 namespace I2C
@@ -12,6 +13,8 @@ namespace I2C
 
 #define I2C_0 I2C::I2CPort(I2C0, RCU_I2C0, GPIO_PIN_6 | GPIO_PIN_7)
 #define I2C_1 I2C::I2CPort(I2C1, RCU_I2C1, GPIO_PIN_10 | GPIO_PIN_11)
+
+
 
     enum I2CDutyCycle : uint32_t
     {
@@ -51,6 +54,7 @@ namespace I2C
         uint32_t _clock;
         I2CDutyCycle _duty_cycle;
         I2CAddressFormat _addr_mode;
+        uint32_t _timeout;
 
     public:
         I2CSettings()
@@ -60,13 +64,20 @@ namespace I2C
         I2CSettings(uint32_t clock,
                     I2CDutyCycle duty_cycle,
                     I2CAddressFormat addr_mode)
+            : I2CSettings(clock, duty_cycle, addr_mode, 100) {}
+        I2CSettings(uint32_t clock,
+                    I2CDutyCycle duty_cycle,
+                    I2CAddressFormat addr_mode,
+                    uint32_t timeout)
             : _clock(clock),
               _duty_cycle(duty_cycle),
-              _addr_mode(addr_mode) {}
+              _addr_mode(addr_mode),
+              _timeout(timeout) {}
 
         uint32_t clock() { return _clock; }
         I2CDutyCycle duty_cycle() { return _duty_cycle; }
         I2CAddressFormat addr_mode() { return _addr_mode; }
+        uint32_t timeout() { return _timeout; }
     };
 
     class I2C
