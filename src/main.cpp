@@ -1,60 +1,104 @@
 #include "LED.hpp"
-#include "ST7920.hpp"
-#include "SSD1306.hpp"
 #include "LCDBuiltin.hpp"
-#include "systick.hpp"
+#include "Timer.hpp"
 
 #include <stdio.h>
 
 uint8_t cnt = 0;
+uint64_t milis, deltaMilis, micros, deltaMicros;
+
+uint8_t bootCnt = 0, lastBootCnt = 0;
+bool bootState = false;
+bool lastBootState = false;
+uint64_t lastBootDebounce;
+
 char dispBuffer[15];
 
+LED::LEDColor ledColor;
 LED::LED led;
+
 LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
+
+GPIO::GPIO boot = GPIO::GPIO(PA8, GPIO::MODE_IPU);
+
+void readBoot();
 
 int main(void)
 {
     // initialize devices
     led.init();
     lcd.init();
+    boot.init();
 
     led.set(LED::RED);
     lcd.clear();
 
-    delay(500);
+    Timer::delay(500);
     led.set(LED::GREEN);
 
     lcd.writeString(24, 0, (char *)"This is a TEST", LCDBuiltin::WHITE);
-    lcd.writeString(24, 16, (char *)"This is a TEST", LCDBuiltin::BLUE);
-    lcd.writeString(24, 32, (char *)"This is a TEST", LCDBuiltin::RED);
-    lcd.writeString(24, 48, (char *)"This is a TEST", LCDBuiltin::MAGENTA);
 
-    // ST7920 lcdExtern(
-    //     SPI(
-    //         SPIPort(SPI2, RCU_GPIOB, RCU_SPI2, GPIOB, GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5, NULL),
-    //         SPISettings(SPIEndianess::MSB, SPIMode::MODE3, SPIPrescale::PSC_256)),
-    //     GPIO(PB9, GPIOMode::MODE_OUT_PP));
+    Timer::delay(500);
 
-    // lcdExtern.writeText(ST7920_LINE0, (char *)"Hello");
-    // lcdExtern.writeText(ST7920_LINE1 + 4, (char *)"world");
+    ledColor = LED::BLACK;
 
-
-    delay(500);
-
+    // test delay / milis
+    micros = Timer::micros();
+    milis = Timer::milis();
     while (1)
     {
-        led.set(LED::MAGENTA);
-        sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
-        // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
-        cnt++;
-        delay(200);
+        deltaMicros = Timer::micros() - micros;
+        deltaMilis = Timer::milis() - milis;
 
-        led.set(LED::BLACK);
-        sprintf(dispBuffer, "Cnt:       %03d", cnt);
-        lcd.writeString(24, 64, dispBuffer, LCDBuiltin::WHITE);
-        // lcdExtern.writeText(ST7920_LINE0, dispBuffer);
-        cnt++;
-        delay(200);
+        readBoot();
+        if (bootState && lastBootCnt == bootCnt)
+        {
+            bootCnt++;
+        }
+        else if (!bootState)
+        {
+            lastBootCnt = bootCnt;
+        }
+
+        if (deltaMilis >= 500)
+        {
+            micros = Timer::micros();
+            milis = Timer::milis();
+
+            sprintf(dispBuffer, "boot:      %03d", bootCnt);
+            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::BLUE);
+
+            sprintf(dispBuffer, "us:    %07lu", deltaMicros);
+            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::RED);
+            sprintf(dispBuffer, "ms:    %07lu", deltaMilis);
+            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::YELLOW);
+
+            // print and inc counter
+            sprintf(dispBuffer, "Cnt:       %03d", cnt);
+            lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);
+            cnt++;
+
+            // toggle LED
+            if (ledColor == LED::BLACK)
+                ledColor = LED::MAGENTA;
+            else
+                ledColor = LED::BLACK;
+            led.set(ledColor);
+        }
     }
+}
+
+void readBoot()
+{
+    bool state = boot.read();
+    if (state != lastBootState)
+    {
+        lastBootDebounce = Timer::milis();
+    }
+    if ((Timer::milis() - lastBootDebounce) > 40 && state != bootState)
+    {
+        bootState = state;
+    }
+
+    lastBootState = state;
 }

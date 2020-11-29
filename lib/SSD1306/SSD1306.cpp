@@ -1,5 +1,5 @@
 #include "SSD1306.hpp"
-#include "systick.hpp"
+#include "Timer.hpp"
 #include <cstdlib>
 #include <cstring>
 
@@ -36,9 +36,9 @@ namespace SSD1306
 
             // reset display
             _reset.set();
-            delay(1);
+            Timer::delay(1);
             _reset.clear();
-            delay(10);
+            Timer::delay(10);
             _reset.set();
         }
 

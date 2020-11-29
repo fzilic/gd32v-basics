@@ -1,5 +1,5 @@
 #include "ST7920.hpp"
-#include "systick.hpp"
+#include "Timer.hpp"
 
 void ST7920::init()
 {
@@ -13,7 +13,7 @@ void ST7920::init()
     send(LCD_BASIC);
     send(LCD_BASIC);
     send(LCD_CLS);
-    delay(5);
+    Timer::delay(5);
     send(LCD_ADDRINC);
     send(LCD_DISPLAYON);
 }
