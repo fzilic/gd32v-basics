@@ -43,7 +43,7 @@ void Timer::delayMicroseconds(uint32_t count)
     } while (delta_mtime < (SystemCoreClock / 4000000.0 * count));
 }
 
-uint64_t Timer::milis()
+uint64_t Timer::millis()
 {
     return get_timer_value() * 4000 / SystemCoreClock;
 }

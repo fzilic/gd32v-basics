@@ -9,7 +9,7 @@ public:
     static void delay(uint32_t count);
     static void delayMicroseconds(uint32_t count);
     
-    static uint64_t milis();
+    static uint64_t millis();
     static uint64_t micros();
 };
 
