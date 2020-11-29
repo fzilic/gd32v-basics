@@ -21,7 +21,7 @@ uint64_t micros, deltaMicros;
 uint64_t lcdMillis, lcdDeltaMillis;
 uint64_t ledMillis, ledDeltaMillis;
 
-char dispBuffer[15];
+char dispBuffer[20];
 #endif // ANY
 
 #ifdef BOOT_COUNTER_DEMO
@@ -67,7 +67,8 @@ int main(void)
 
 #ifdef LCD_BUILTIN_DEMO
     lcd.clear();
-    lcd.writeString(24, 0, (char *)"Booting...", LCDBuiltin::YELLOW);
+    sprintf(dispBuffer, "%-19s", "Booting...");
+    lcd.writeString(0, 0, dispBuffer, LCDBuiltin::YELLOW);
 #endif
 
 #if defined(LCD_BUILTIN_DEMO) || defined(LED_DEMO)
@@ -83,7 +84,8 @@ int main(void)
 #endif
 
 #ifdef LCD_BUILTIN_DEMO
-    lcd.writeString(24, 0, (char *)"Running...", LCDBuiltin::GREEN);
+    sprintf(dispBuffer, "%-19s", "Running...");
+    lcd.writeString(0, 0, dispBuffer, LCDBuiltin::GREEN);
 #endif
 
 #ifdef LED_DEMO
@@ -113,17 +115,17 @@ int main(void)
 
 #ifdef LCD_BUILTIN_DEMO
 #ifdef BOOT_COUNTER_DEMO
-            sprintf(dispBuffer, "Cnt:       %03d", cnt);
-            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::YELLOW);
+            sprintf(dispBuffer, "%-16s%03d", "Cnt:", cnt);
+            lcd.writeString(0, 16, dispBuffer, LCDBuiltin::YELLOW);
 #endif // BOOT_COUNTER_DEMO
 
-            sprintf(dispBuffer, "us:    %07lu", deltaMicros);
-            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::DARKBLUE);
-            sprintf(dispBuffer, "ms:    %07lu", lcdDeltaMillis);
-            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::BLUE);
+            sprintf(dispBuffer, "%-12s%07lu", "us:", (uint32_t)deltaMicros);
+            lcd.writeString(0, 32, dispBuffer, LCDBuiltin::DARKBLUE);
+            sprintf(dispBuffer, "%-12s%07lu", "ms:", (uint32_t)lcdDeltaMillis);
+            lcd.writeString(0, 48, dispBuffer, LCDBuiltin::BLUE);
 
-            sprintf(dispBuffer, "xxxxxxxxxxxxxx");
-            lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);
+            sprintf(dispBuffer, "xxxxxxxxxxxxxxxxxxx");
+            lcd.writeString(0, 64, dispBuffer, LCDBuiltin::MAGENTA);
 #endif // LCD_BUILTIN_DEMO
         }
 
