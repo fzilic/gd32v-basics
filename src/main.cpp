@@ -1,32 +1,242 @@
+#include "Configuration.h"
+
+#ifdef BOOT_COUNTER_DEMO
+#include "GPIO_pins.hpp"
+#include "GPIO.hpp"
+#endif // BOOT_COUNTER_DEMO
+
+#ifdef LED_DEMO
 #include "LED.hpp"
+#endif //LED_DEMO
+
+#ifdef LCD_BUILTIN_DEMO
 #include "LCDBuiltin.hpp"
+#endif //LCD_BUILTIN_DEMO
+
+#if defined(BOOT_COUNTER_DEMO) || defined(LED_DEMO) || defined(LCD_BUILTIN_DEMO) || defined(EXT_SSD1306_DEMO)
 #include "Timer.hpp"
-
-#include "I2C.hpp"
-
 #include <stdio.h>
-
-#include "u8g2.h"
-#include "u8x8.h"
 
 uint64_t micros, deltaMicros;
 uint64_t lcdMillis, lcdDeltaMillis;
 uint64_t ledMillis, ledDeltaMillis;
 
+char dispBuffer[15];
+#endif // ANY
+
+#ifdef EXT_SSD1306_DEMO
+#include "I2C.hpp"
+#include "u8g2.h"
+#include "u8x8.h"
+#endif // EXT_SSD1306_DEMO
+
+#ifdef BOOT_COUNTER_DEMO
 volatile uint8_t cnt = 0;
 volatile uint64_t lastBootDebounce;
+#endif // BOOT_COUNTER_DEMO
 
-char dispBuffer[15];
-
+#ifdef LED_DEMO
 LED::LEDColor ledColor;
 LED::LED led;
-LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
+#endif
 
-// u8g2_t u8g2;
+#ifdef LCD_BUILTIN_DEMO
+LCDBuiltin::LCDBuiltin lcd(LCDBuiltin::BLACK, LCDBuiltin::HORIZONTAL_FLIPPED);
+#endif
+
+#ifdef EXT_SSD1306_DEMO
 u8x8_t u8x8;
 uint8_t tile[8] = {0x0f, 0x0f, 0x0f, 0x0f, 0xf0, 0xf0, 0xf0, 0xf0};
 
 I2C::I2C i2c0(I2C_0, I2C::I2CSettings(100000UL));
+
+extern "C" uint8_t u8x8_gpio_and_delay_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
+extern "C" uint8_t u8x8_byte_hw_i2c_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
+
+void ssd1306Init(void);
+#endif // EXT_SSD1306_DEMO
+
+#ifdef BOOT_COUNTER_DEMO
+GPIO::GPIO boot = GPIO::GPIO(PA8, GPIO::MODE_IPU);
+
+void key_exti_init(void);
+extern "C" void EXTI5_9_IRQHandler(void);
+#endif
+
+int main(void)
+{
+    // initialize devices
+#ifdef LED_DEMO
+    led.init();
+#endif
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.init();
+#endif
+
+#ifdef BOOT_COUNTER_DEMO
+    boot.init();
+    key_exti_init();
+#endif
+
+#ifdef LED_DEMO
+    led.set(LED::RED);
+#endif
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.clear();
+
+    lcd.writeString(24, 0, (char *)"Booting...    ", LCDBuiltin::RED);
+    Timer::delay(100);
+#endif
+
+#ifdef EXT_SSD1306_DEMO
+    ssd1306Init();
+#endif
+
+#if defined(LCD_BUILTIN_DEMO) || defined(LED_DEMO)
+    Timer::delay(500);
+#endif
+
+#ifdef LED_DEMO
+    led.set(LED::GREEN);
+#endif
+
+#ifdef EXT_SSD1306_DEMO
+    u8x8_SetFont(&u8x8, u8x8_font_chroma48medium8_r);
+    u8x8_DrawString(&u8x8, 0, 0, "Hello World");
+    u8x8_DrawString(&u8x8, 3, 1, "ABCdefg");
+    u8x8_DrawTile(&u8x8, 1, 1, 1, tile);
+    u8x8_DrawTile(&u8x8, 2, 2, 1, tile);
+    u8x8_DrawTile(&u8x8, 3, 3, 1, tile);
+    u8x8_DrawTile(&u8x8, 4, 4, 1, tile);
+    u8x8_DrawTile(&u8x8, 5, 5, 1, tile);
+    u8x8_DrawTile(&u8x8, 6, 6, 1, tile);
+#endif
+
+#if defined(LCD_BUILTIN_DEMO) || defined(LED_DEMO)
+    Timer::delay(500);
+#endif
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.writeString(24, 0, (char *)"Running...    ", LCDBuiltin::GREEN);
+#endif
+
+#ifdef LED_DEMO
+    ledColor = LED::BLACK;
+#endif
+
+    // test delay / millis
+#if defined(BOOT_COUNTER_DEMO) || defined(LED_DEMO) || defined(LCD_BUILTIN_DEMO)
+    micros = Timer::micros();
+
+    // update intervals
+    lcdMillis = Timer::millis();
+    ledMillis = Timer::millis();
+#endif
+    while (1)
+    {
+#if defined(BOOT_COUNTER_DEMO) || defined(LED_DEMO) || defined(LCD_BUILTIN_DEMO)
+        deltaMicros = Timer::micros() - micros;
+        lcdDeltaMillis = Timer::millis() - lcdMillis;
+        ledDeltaMillis = Timer::millis() - ledMillis;
+
+        // lcd every 50ms
+        if (lcdDeltaMillis >= 50)
+        {
+            micros = Timer::micros();
+            lcdMillis = Timer::millis();
+
+#ifdef LCD_BUILTIN_DEMO
+#ifdef BOOT_COUNTER_DEMO
+            sprintf(dispBuffer, "Cnt:       %03d", cnt);
+            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::BLUE);
+#endif // BOOT_COUNTER_DEMO
+
+            sprintf(dispBuffer, "us:    %07lu", deltaMicros);
+            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::RED);
+            sprintf(dispBuffer, "ms:    %07lu", lcdDeltaMillis);
+            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::YELLOW);
+
+            sprintf(dispBuffer, "xxxxxxxxxxxxxx");
+            lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);
+#endif // LCD_BUILTIN_DEMO
+        }
+
+#ifdef LED_DEMO
+        if (ledDeltaMillis >= 500)
+        {
+            ledMillis = Timer::millis();
+            // toggle LED
+            if (ledColor == LED::BLACK)
+                ledColor = LED::MAGENTA;
+            else
+                ledColor = LED::BLACK;
+            led.set(ledColor);
+        }
+#endif // LED_DEMO
+#endif
+    }
+}
+
+#ifdef BOOT_COUNTER_DEMO
+void key_exti_init(void)
+{
+    /* enable the AF clock */
+    rcu_periph_clock_enable(RCU_AF);
+    /* enable and set key EXTI interrupt to the specified priority */
+    eclic_global_interrupt_enable();
+    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
+    eclic_irq_enable(EXTI5_9_IRQn, 1, 1);
+
+    /* connect key EXTI line to key GPIO pin */
+    gpio_exti_source_select(GPIO_PORT_SOURCE_GPIOA, GPIO_PIN_SOURCE_8);
+
+    /* configure key EXTI line */
+    exti_init(EXTI_8, EXTI_INTERRUPT, EXTI_TRIG_FALLING);
+    exti_interrupt_flag_clear(EXTI_8);
+}
+
+extern "C" void EXTI5_9_IRQHandler(void)
+{
+    if (RESET != exti_interrupt_flag_get(EXTI_8))
+    {
+
+        if (!boot.read() && (Timer::millis() - lastBootDebounce) > 40)
+        {
+            cnt++;
+        }
+
+        lastBootDebounce = Timer::millis();
+
+        exti_interrupt_flag_clear(EXTI_8);
+    }
+}
+#endif // BOOT_COUNTER_DEMO
+
+#ifdef EXT_SSD1306_DEMO
+void ssd1306Init(void)
+{
+#ifdef LCD_BUILTIN_DEMO
+    lcd.writeString(24, 0, "u8x8 Setup    ", LCDBuiltin::YELLOW);
+#endif
+    u8x8_Setup(&u8x8, u8x8_d_ssd1306_128x64_noname, u8x8_cad_ssd13xx_fast_i2c, u8x8_byte_hw_i2c_gd32v, u8x8_gpio_and_delay_gd32v);
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.writeString(24, 0, "u8x8 Init     ", LCDBuiltin::YELLOW);
+#endif
+    u8x8_InitDisplay(&u8x8);
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.writeString(24, 0, "u8x8 CD       ", LCDBuiltin::YELLOW);
+#endif
+    u8x8_ClearDisplay(&u8x8);
+
+#ifdef LCD_BUILTIN_DEMO
+    lcd.writeString(24, 0, "u8x8 Set PS    ", LCDBuiltin::YELLOW);
+#endif
+    u8x8_SetPowerSave(&u8x8, 0);
+}
 
 extern "C" uint8_t u8x8_gpio_and_delay_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr)
 {
@@ -178,128 +388,4 @@ extern "C" uint8_t u8x8_byte_hw_i2c_gd32v(u8x8_t *u8x8, uint8_t msg, uint8_t arg
     return 1;
 }
 
-GPIO::GPIO boot = GPIO::GPIO(PA8, GPIO::MODE_IPU);
-
-void key_exti_init(void);
-extern "C" void EXTI5_9_IRQHandler(void);
-
-int main(void)
-{
-    // initialize devices
-    led.init();
-    lcd.init();
-    boot.init();
-    key_exti_init();
-
-    led.set(LED::RED);
-    lcd.clear();
-
-    lcd.writeString(24, 0, (char *)"Booting...    ", LCDBuiltin::RED);
-    Timer::delay(100);
-
-    lcd.writeString(24, 0, "u8x8 Setup    ", LCDBuiltin::YELLOW);
-    u8x8_Setup(&u8x8, u8x8_d_ssd1306_128x64_noname, u8x8_cad_ssd13xx_fast_i2c, u8x8_byte_hw_i2c_gd32v, u8x8_gpio_and_delay_gd32v);
-
-    lcd.writeString(24, 0, "u8x8 Init     ", LCDBuiltin::YELLOW);
-    u8x8_InitDisplay(&u8x8);
-
-    lcd.writeString(24, 0, "u8x8 CD       ", LCDBuiltin::YELLOW);
-    u8x8_ClearDisplay(&u8x8);
-
-    lcd.writeString(24, 0, "u8x8 Set PS    ", LCDBuiltin::YELLOW);
-    u8x8_SetPowerSave(&u8x8, 0);
-
-    Timer::delay(500);
-    led.set(LED::GREEN);
-
-    u8x8_SetFont(&u8x8, u8x8_font_chroma48medium8_r);
-    u8x8_DrawString(&u8x8, 0, 0, "Hello World");
-    u8x8_DrawString(&u8x8, 3, 1, "ABCdefg");
-    u8x8_DrawTile(&u8x8, 1, 1, 1, tile);
-    u8x8_DrawTile(&u8x8, 2, 2, 1, tile);
-    u8x8_DrawTile(&u8x8, 3, 3, 1, tile);
-    u8x8_DrawTile(&u8x8, 4, 4, 1, tile);
-    u8x8_DrawTile(&u8x8, 5, 5, 1, tile);
-    u8x8_DrawTile(&u8x8, 6, 6, 1, tile);
-
-    Timer::delay(500);
-    lcd.writeString(24, 0, (char *)"Running...    ", LCDBuiltin::GREEN);
-
-    ledColor = LED::BLACK;
-
-    // test delay / millis
-    micros = Timer::micros();
-
-    // update intervals
-    lcdMillis = Timer::millis();
-    ledMillis = Timer::millis();
-
-    while (1)
-    {
-        deltaMicros = Timer::micros() - micros;
-        lcdDeltaMillis = Timer::millis() - lcdMillis;
-        ledDeltaMillis = Timer::millis() - ledMillis;
-
-        // lcd every 50ms
-        if (lcdDeltaMillis >= 50)
-        {
-            micros = Timer::micros();
-            lcdMillis = Timer::millis();
-
-            sprintf(dispBuffer, "Cnt:       %03d", cnt);
-            lcd.writeString(24, 16, dispBuffer, LCDBuiltin::BLUE);
-
-            sprintf(dispBuffer, "us:    %07lu", deltaMicros);
-            lcd.writeString(24, 32, dispBuffer, LCDBuiltin::RED);
-            sprintf(dispBuffer, "ms:    %07lu", lcdDeltaMillis);
-            lcd.writeString(24, 48, dispBuffer, LCDBuiltin::YELLOW);
-
-            sprintf(dispBuffer, "xxxxxxxxxxxxxx");
-            lcd.writeString(24, 64, dispBuffer, LCDBuiltin::MAGENTA);
-        }
-
-        if (ledDeltaMillis >= 500)
-        {
-            ledMillis = Timer::millis();
-            // toggle LED
-            if (ledColor == LED::BLACK)
-                ledColor = LED::MAGENTA;
-            else
-                ledColor = LED::BLACK;
-            led.set(ledColor);
-        }
-    }
-}
-
-void key_exti_init(void)
-{
-    /* enable the AF clock */
-    rcu_periph_clock_enable(RCU_AF);
-    /* enable and set key EXTI interrupt to the specified priority */
-    eclic_global_interrupt_enable();
-    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
-    eclic_irq_enable(EXTI5_9_IRQn, 1, 1);
-
-    /* connect key EXTI line to key GPIO pin */
-    gpio_exti_source_select(GPIO_PORT_SOURCE_GPIOA, GPIO_PIN_SOURCE_8);
-
-    /* configure key EXTI line */
-    exti_init(EXTI_8, EXTI_INTERRUPT, EXTI_TRIG_FALLING);
-    exti_interrupt_flag_clear(EXTI_8);
-}
-
-extern "C" void EXTI5_9_IRQHandler(void)
-{
-    if (RESET != exti_interrupt_flag_get(EXTI_8))
-    {
-
-        if (!boot.read() && (Timer::millis() - lastBootDebounce) > 40)
-        {
-            cnt++;
-        }
-
-        lastBootDebounce = Timer::millis();
-
-        exti_interrupt_flag_clear(EXTI_8);
-    }
-}
+#endif
