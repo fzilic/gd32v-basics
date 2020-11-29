@@ -1,5 +1,7 @@
 #include "Configuration.h"
 
+#include "Adafruit_ST7735.hpp"
+
 #ifdef BOOT_COUNTER_DEMO
 #include "GPIO_pins.hpp"
 #include "GPIO.hpp"
