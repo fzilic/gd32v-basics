@@ -62,13 +62,22 @@ namespace LCDBuiltin
         void writeChar(uint16_t x, uint16_t y, uint8_t value, LCDBuiltinColor color, LCDBuiltinMode mode = NON_OVERLAPPING);
 
     public:
+    public:
         LCDBuiltinColor _backColor;
-        LCDBuiltin(LCDBuiltinColor backColor = WHITE,
-                   LCDBuiltinOrientation orientation = HORIZONTAL)
+        LCDBuiltin()
+            : LCDBuiltin(WHITE, HORIZONTAL) {}
+        LCDBuiltin(LCDBuiltinColor backColor,
+                   LCDBuiltinOrientation orientation)
+            : LCDBuiltin(backColor,
+                         orientation,
+                         SPI::SPIPrescale::PSC_2) {}
+        LCDBuiltin(LCDBuiltinColor backColor,
+                   LCDBuiltinOrientation orientation,
+                   SPI::SPIPrescale prescale)
             : _spi(
                   SPI::SPI(
                       SPI::SPIPort(SPI0, RCU_GPIOA, RCU_SPI0, GPIOA, GPIO_PIN_5 | GPIO_PIN_7, GPIO_PIN_6),
-                      SPI::SPISettings(SPI::SPIEndianess::MSB, SPI::SPIMode::MODE3, SPI::SPIPrescale::PSC_8))),
+                      SPI::SPISettings(SPI::SPIEndianess::MSB, SPI::SPIMode::MODE3, prescale))),
               _rst(GPIO::GPIO(PB1, GPIO::MODE_OUT_PP)),
               _cs(GPIO::GPIO(PB2, GPIO::MODE_OUT_PP)),
               _dc(GPIO::GPIO(PB0, GPIO::MODE_OUT_PP)),
