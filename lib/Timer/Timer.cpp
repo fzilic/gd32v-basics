@@ -1,6 +1,6 @@
 
-#ifndef __SYSTICK_H
-#define __SYSTICK_H
+#ifndef __TIMER_H
+#define __TIMER_H
 
 #include "Timer.hpp"
 
